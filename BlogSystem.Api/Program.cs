@@ -1,3 +1,4 @@
+using BlogSystem.Application;
 using BlogSystem.Infrastructure;
 using BlogSystem.Infrastructure.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 {
-    builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.AddInfrastructure(builder.Configuration)
+                    .AddApplication();
 }
 
 

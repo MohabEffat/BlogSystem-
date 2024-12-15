@@ -10,4 +10,10 @@
     <ProjectReference Include="..\BlogSystem.Domain\BlogSystem.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Commands\" />
+    <Folder Include="Handler\" />
+    <Folder Include="Queries\" />
+  </ItemGroup>
+
 </Project>

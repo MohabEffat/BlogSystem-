@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BlogSystem.Infrastructure.Configurations
 {
-    public class PostTagConfiguration : IEntityTypeConfiguration<PostTag>
+    public class PostTagConfigurations : IEntityTypeConfiguration<PostTag>
     {
         public void Configure(EntityTypeBuilder<PostTag> builder)
         {

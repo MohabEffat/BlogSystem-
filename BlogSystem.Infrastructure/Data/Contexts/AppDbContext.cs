@@ -2,6 +2,8 @@
 using BlogSystem.Domain.Entities.System;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace BlogSystem.Infrastructure.Data.Contexts
 {
@@ -11,6 +13,13 @@ namespace BlogSystem.Infrastructure.Data.Contexts
         {
 
         }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            base.OnModelCreating(builder);
+
+        }
+
         DbSet<AppUser> appUsers { get; set; }
         DbSet<Post> posts { get; set; }
         DbSet<Comment> Comments { get; set; }

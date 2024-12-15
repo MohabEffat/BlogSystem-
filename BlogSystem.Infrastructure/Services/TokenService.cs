@@ -30,9 +30,9 @@ namespace BlogSystem.Infrastructure.Services
                 new Claim (ClaimTypes.Surname, user.LastName!),
                 new Claim (ClaimTypes.GivenName, user.UserName!),
                 new Claim (ClaimTypes.Email, user.Email!),
-                new Claim (ClaimTypes.DateOfBirth, user.DateOfBirth.ToString()!),
+                new Claim (ClaimTypes.DateOfBirth, user.DateOfBirth.ToString(("yyyy-MM-dd"))!),
                 new Claim (ClaimTypes.NameIdentifier, user.Id),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString(("yyyy-MM-dd")))
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 
             };
 

@@ -17,4 +17,8 @@
     <ProjectReference Include="..\BlogSystem.Application\BlogSystem.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

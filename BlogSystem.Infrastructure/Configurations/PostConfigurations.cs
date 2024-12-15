@@ -38,10 +38,8 @@ namespace BlogSystem.Infrastructure.Configurations
                 .HasForeignKey(p => p.AuthorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
             builder.Property(p => p.status)
                 .HasConversion<string>();
-
 
         }
     }

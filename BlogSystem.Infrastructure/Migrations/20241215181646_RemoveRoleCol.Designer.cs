@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241214155406_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20241215181646_RemoveRoleCol")]
+    partial class RemoveRoleCol
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,7 +51,7 @@ namespace BlogSystem.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LasttName")
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -78,10 +78,6 @@ namespace BlogSystem.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -93,6 +89,10 @@ namespace BlogSystem.Infrastructure.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Id");
+
+                    SqlServerIndexBuilderExtensions.IsClustered(b.HasIndex("Id"), false);
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -113,9 +113,14 @@ namespace BlogSystem.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("NVARCHAR");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Id");
+
+                    SqlServerIndexBuilderExtensions.IsClustered(b.HasIndex("Id"), false);
 
                     b.ToTable("Categories");
                 });
@@ -131,10 +136,13 @@ namespace BlogSystem.Infrastructure.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("NVARCHAR");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasComputedColumnSql("GETDATE()");
 
                     b.Property<Guid?>("PostId")
                         .HasColumnType("uniqueidentifier");
@@ -145,6 +153,10 @@ namespace BlogSystem.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("Id");
+
+                    SqlServerIndexBuilderExtensions.IsClustered(b.HasIndex("Id"), false);
 
                     b.HasIndex("PostId");
 
@@ -165,20 +177,27 @@ namespace BlogSystem.Infrastructure.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("NVARCHAR");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasComputedColumnSql("GETDATE()");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("NVARCHAR");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasComputedColumnSql("GETDATE()");
 
-                    b.Property<int>("status")
-                        .HasColumnType("int");
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -186,24 +205,29 @@ namespace BlogSystem.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("Id");
+
+                    SqlServerIndexBuilderExtensions.IsClustered(b.HasIndex("Id"), false);
+
                     b.ToTable("posts");
                 });
 
             modelBuilder.Entity("BlogSystem.Domain.Entities.System.PostTag", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("PostId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("TagId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasIndex("PostId");
+                    b.HasKey("PostId", "TagId");
+
+                    b.HasIndex("Id");
+
+                    SqlServerIndexBuilderExtensions.IsClustered(b.HasIndex("Id"), false);
 
                     b.HasIndex("TagId");
 
@@ -218,9 +242,14 @@ namespace BlogSystem.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("NVARCHAR");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Id");
+
+                    SqlServerIndexBuilderExtensions.IsClustered(b.HasIndex("Id"), false);
 
                     b.ToTable("Tags");
                 });
@@ -362,7 +391,8 @@ namespace BlogSystem.Infrastructure.Migrations
                 {
                     b.HasOne("BlogSystem.Domain.Entities.Identity.AppUser", "Author")
                         .WithMany("Comments")
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BlogSystem.Domain.Entities.System.Post", "Post")
                         .WithMany("Comments")
@@ -377,11 +407,13 @@ namespace BlogSystem.Infrastructure.Migrations
                 {
                     b.HasOne("BlogSystem.Domain.Entities.Identity.AppUser", "Author")
                         .WithMany("Posts")
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("BlogSystem.Domain.Entities.System.Category", "Category")
                         .WithMany("Posts")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Author");
 
@@ -392,11 +424,15 @@ namespace BlogSystem.Infrastructure.Migrations
                 {
                     b.HasOne("BlogSystem.Domain.Entities.System.Post", "Post")
                         .WithMany("PostTags")
-                        .HasForeignKey("PostId");
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BlogSystem.Domain.Entities.System.Tag", "Tag")
                         .WithMany("PostTags")
-                        .HasForeignKey("TagId");
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Post");
 

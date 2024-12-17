@@ -24,11 +24,11 @@ namespace BlogSystem.Application.Manager.Handler
         {
             var existUser = await _userManager.FindByEmailAsync(request.LoginDto.Email);
 
-            if (existUser is null) throw new UnauthorizedAccessException("Invalid email or password.");
+            if (existUser is null) throw new Exception("Invalid email or password.");
 
             var result = await _signInManager.CheckPasswordSignInAsync(existUser, request.LoginDto.Password, false);
 
-            if (!result.Succeeded) throw new UnauthorizedAccessException("Invalid email or password.");
+            if (!result.Succeeded) throw new Exception("Invalid email or password.");
 
             return new ResponseDto
             {
